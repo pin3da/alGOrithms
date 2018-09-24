@@ -1,10 +1,8 @@
-// Edge ...
 type Edge struct {
 	from, to  int
 	cap, flow int64
 }
 
-// Dinic ...
 type Dinic struct {
 	N     int
 	edges []Edge
@@ -12,12 +10,10 @@ type Dinic struct {
 	d, pt []int
 }
 
-// NewDinic ...
 func NewDinic(N int) *Dinic {
 	return &Dinic{N, make([]Edge, 0), make([][]int, N), make([]int, N), make([]int, N)}
 }
 
-// AddEdge ...
 func (g *Dinic) AddEdge(from, to, cap int) {
 	g.edges = append(g.edges, Edge{from, to, int64(cap), int64(0)})
 	g.g[from] = append(g.g[from], len(g.edges)-1)
@@ -29,8 +25,9 @@ func (g *Dinic) bfs(s, t int) bool {
 	cur := []int{s}
 	next := []int{}
 
+	inf := g.N + 10
 	for i := range g.d {
-		g.d[i] = g.N + 10
+		g.d[i] = inf
 	}
 	g.d[s] = 0
 
@@ -47,7 +44,7 @@ func (g *Dinic) bfs(s, t int) bool {
 		cur = next
 		next = []int{}
 	}
-	return g.d[t] != (g.N + 10)
+	return g.d[t] != inf
 }
 
 func (g *Dinic) dfs(node, T int, flow int64) int64 {
@@ -61,8 +58,8 @@ func (g *Dinic) dfs(node, T int, flow int64) int64 {
 		if g.d[e.from] == g.d[e.to]-1 {
 			amt := min64(e.cap-e.flow, flow)
 			if pushed := g.dfs(e.to, T, amt); pushed > 0 {
-				e.flow += amt
-				oe.flow -= amt
+				e.flow += pushed
+				oe.flow -= pushed
 				return pushed
 			}
 
@@ -71,15 +68,15 @@ func (g *Dinic) dfs(node, T int, flow int64) int64 {
 	return 0
 }
 
-// MaxFlow ...
 func (g *Dinic) MaxFlow(source, sink int) int64 {
 	total := int64(0)
 	for g.bfs(source, sink) {
 		for i := range g.pt {
 			g.pt[i] = 0
 		}
-		for flow := g.dfs(source, sink, int64(1<<60)); flow > 0; flow = g.dfs(source, sink, int64(1<<60)) {
+		for flow := g.dfs(source, sink, int64(1<<60)); flow > 0; {
 			total += flow
+			flow = g.dfs(source, sink, int64(1<<60))
 		}
 	}
 	return total
