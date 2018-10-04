@@ -10,15 +10,11 @@ func main() {
 	cin := NewReader()
 }
 
-/// TEMPLATE
-
-// Reader is a fast input for programming competitions
 type Reader struct {
 	scanner *bufio.Scanner
 	Ended   bool
 }
 
-// NewReader ...
 func NewReader() *Reader {
 	var reader Reader
 	reader.scanner = bufio.NewScanner(os.Stdin)
@@ -27,8 +23,7 @@ func NewReader() *Reader {
 	return &reader
 }
 
-// NextInt ...
-func (r *Reader) NextInt() int {
+func (r *Reader) Int() int {
 	tmp := r.Next()
 	if !r.Ended {
 		res, _ := strconv.Atoi(tmp)
@@ -37,7 +32,14 @@ func (r *Reader) NextInt() int {
 	return 0
 }
 
-// Next ...
+func (r *Reader) Array(len int) []int {
+	result := make([]int, len)
+	for i := 0; i < len; i++ {
+		result[i] = r.Int()
+	}
+	return result
+}
+
 func (r *Reader) Next() string {
 	if r.scanner.Scan() {
 		return r.scanner.Text()
