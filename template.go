@@ -32,7 +32,7 @@ func (r *Reader) Int() int {
 	return 0
 }
 
-func (r *Reader) Array(len int) []int {
+func (r *Reader) IntArray(len int) []int {
 	result := make([]int, len)
 	for i := 0; i < len; i++ {
 		result[i] = r.Int()
